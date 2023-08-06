@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
-import "./Map.css"
+import './Map.css';
+import Map from './Map'; // Import the Map component
 
 function IPAddressTracker() {
   const defaultMapCenter = [37.7749, -122.4194]; // Default center for the map
   const [userIP, setUserIP] = useState('');
   const [mapCenter, setMapCenter] = useState(defaultMapCenter);
-
-  function ChangeView({ center, zoom }) {
-    const map = useMap();
-    map.setView(center, zoom);
-    return null;
-  }
 
   const handleSearch = () => {
     // Replace this with your code to fetch data using the userIP
@@ -25,8 +19,6 @@ function IPAddressTracker() {
   const handleChange = (e) => {
     setUserIP(e.target.value);
   };
-  
-  const MemoizedIPAddressTracker = React.memo(IPAddressTracker);
 
   return (
     <div className="ip-address-tracker">
@@ -37,19 +29,7 @@ function IPAddressTracker() {
           Search
         </button>
       </div>
-      <MapContainer center={mapCenter} zoom={13} style={{ width: '100%', height: '400px' }}>
-        <ChangeView center={mapCenter} zoom={13} />
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {/* Add a Marker at the mapCenter */}
-        <Marker position={mapCenter}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
-      </MapContainer>
+      <Map center={mapCenter} />
       <div id="results">
         <h2>Results:</h2>
         <p>
