@@ -5,6 +5,31 @@ import background from "./images/bg.png";
 import icon from "./components/icon";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "./App.css";
+import styled from 'styled-components'
+
+const StyledButton = styled.button`
+  width: 58px;
+  height: 58px;
+  border-radius: 15px;
+  background: #252525;
+`
+
+const Center = styled.center`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+`
+const ImportantText = styled.title`
+  display: flex;
+  color: #7e2121;
+  font-family: Rubik;
+  font-size: 31px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-align: center;
+`
 
 function App() {
   const [address, setAddress] = useState(null);
@@ -13,7 +38,8 @@ function App() {
     try {
       const getInitialData = async () => {
         const res = await fetch(
-          `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_API_KEY}&ipAddress=8.8.8.8`
+          `
+          https://geo.ipify.org/api/v2/country?apiKey=at_u8Zdl5BouYqkrEacibXgh8FMwkUTv&ipAddress=8.8.8.8`
         );
         const data = await res.json();
         setAddress(data);
@@ -27,12 +53,12 @@ function App() {
   }, []);
 
   return (
-    <section>
+    <Center className="center">
       <div className="background">
         <img src={background} alt="" />
       </div>
       <article>
-        <h1 className="title">IP Address Tracker</h1>
+        <ImportantText className="title">IP Address Tracker</ImportantText>
         <form action="" className="input">
           <input
             type="text"
@@ -41,9 +67,9 @@ function App() {
             placeholder="Search for any IP Address or domain"
             required
           />
-          <button type="submit">
+          <StyledButton type="submit">
             <img src={arrow} alt="" />
-          </button>
+          </StyledButton>
         </form>
       </article>
       {address && (
@@ -92,7 +118,7 @@ function App() {
           </Marker>
         </MapContainer>
       )}
-    </section>
+    </Center>
   );
 }
 
