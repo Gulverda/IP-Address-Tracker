@@ -1,65 +1,69 @@
 import React, { useState, useEffect } from "react";
-import "leaflet/dist/leaflet.css";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import styled from 'styled-components';
 import arrow from "./images/icon-arrow.svg";
 import background from "./images/bg.png";
 import icon from "./components/icon";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "./App.css";
-import styled from 'styled-components'
 
 const StyledButton = styled.button`
   width: 58px;
   height: 58px;
   border-radius: 15px;
   background: #252525;
-`
+`;
 
-const Center = styled.center`
-  width: 100%;
+const Center = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   text-align: center;
-`
-const ImportantText = styled.title`
-  display: flex;
+  height: 100vh;
+`;
+
+const ImportantText = styled.h1`
   color: #7e2121;
   font-family: Rubik;
   font-size: 31px;
-  font-style: normal;
   font-weight: 600;
-  line-height: normal;
-  text-align: center;
-`
+`;
+
+const FrontContText = styled.h2`
+  color: var(--dark-gray, #969696);
+  font-family: Rubik;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.3px;
+`;
 
 function App() {
   const [address, setAddress] = useState(null);
 
   useEffect(() => {
-    try {
-      const getInitialData = async () => {
-        const res = await fetch(
-          `
-          https://geo.ipify.org/api/v2/country?apiKey=at_u8Zdl5BouYqkrEacibXgh8FMwkUTv&ipAddress=8.8.8.8`
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://geo.ipify.org/api/v1?apiKey=YOUR_API_KEY"
         );
-        const data = await res.json();
+        const data = await response.json();
         setAddress(data);
-        console.log(data);
-      };
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-      getInitialData();
-    } catch (error) {
-      console.trace(error);
-    }
+    fetchData();
   }, []);
 
   return (
-    <Center className="center">
+    <Center>
       <div className="background">
         <img src={background} alt="" />
       </div>
       <article>
-        <ImportantText className="title">IP Address Tracker</ImportantText>
-        <form action="" className="input">
+        <ImportantText>IP Address Tracker</ImportantText>
+        <form className="input">
           <input
             type="text"
             name="ipaddress"
@@ -68,7 +72,7 @@ function App() {
             required
           />
           <StyledButton type="submit">
-            <img src={arrow} alt="" />
+            <img src={arrow} alt="Search" />
           </StyledButton>
         </form>
       </article>
@@ -76,12 +80,12 @@ function App() {
         <article>
           <div className="front-content">
             <div className="cont1">
-              <h2 className="front-cont-txt">IP ADDRESS</h2>
+              <FrontContText>IP ADDRESS</FrontContText>
               <p className="paragraph-for-front-cont">{address.ip}</p>
             </div>
             {address.location && (
               <div className="cont1">
-                <h2 className="front-cont-txt">LOCATION</h2>
+                <FrontContText>LOCATION</FrontContText>
                 <p className="paragraph-for-front-cont">
                   {address.location.city}, {address.location.region}
                 </p>
@@ -89,22 +93,25 @@ function App() {
             )}
             {address.location && (
               <div className="cont1">
-                <h2 className="front-cont-txt">TIMEZONE</h2>
+                <FrontContText>TIMEZONE</FrontContText>
                 <p className="paragraph-for-front-cont">
                   UTC {address.location.timezone}
                 </p>
               </div>
             )}
             <div className="cont1">
-              <h2 className="front-cont-txt">ISP</h2>
+              <FrontContText>ISP</FrontContText>
               <p className="paragraph-for-front-cont">{address.isp}</p>
             </div>
           </div>
         </article>
       )}
-      {address && (
+      {address && address.location && (
         <MapContainer
-          center={[51.505, -0.09]}
+          center={[
+            address.location.lat,
+            address.location.lng
+          ]}
           zoom={13}
           scrollWheelZoom={false}
           style={{ height: "500px", width: "100vw" }}
@@ -113,7 +120,13 @@ function App() {
             attribution='<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker icon={icon} position={[51.505, -0.09]}>
+          <Marker
+            icon={icon}
+            position={[
+              address.location.lat,
+              address.location.lng
+            ]}
+          >
             <Popup>A pretty CSS3 popup</Popup>
           </Marker>
         </MapContainer>
