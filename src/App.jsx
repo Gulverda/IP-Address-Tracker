@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import arrow from "./images/icon-arrow.svg";
 import background from "./images/bg.png";
 import icon from "./components/icon";
+import L from 'leaflet'; // Import Leaflet for creating a custom icon
 import "./App.css";
 
 const StyledButton = styled.button`
@@ -37,6 +38,54 @@ const FrontContText = styled.h2`
   letter-spacing: 1.3px;
 `;
 
+const BackgroundImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url(${background});
+  background-size: cover;
+  z-index: -1;
+`;
+
+const InputForm = styled.form`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Input = styled.input`
+  width: 250px;
+  padding: 10px;
+  border-radius: 15px 0 0 15px;
+  border: none;
+`;
+
+const ResultArticle = styled.article`
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+`;
+
+const FrontContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+`;
+
+const FrontContentBlock = styled.div`
+  text-align: center;
+`;
+
+const customIcon = new L.Icon({
+  iconUrl: icon, // Use the path to your custom icon image
+  iconSize: [32, 32], // Icon size (width, height)
+  iconAnchor: [16, 32], // Position of the icon's anchor point
+  popupAnchor: [0, -32] // Position of the popup relative to the icon
+});
+
 function App() {
   const [address, setAddress] = useState(null);
 
@@ -58,13 +107,11 @@ function App() {
 
   return (
     <Center>
-      <div className="background">
-        <img src={background} alt="" />
-      </div>
+      <BackgroundImage />
       <article>
         <ImportantText>IP Address Tracker</ImportantText>
-        <form className="input">
-          <input
+        <InputForm className="input">
+          <Input
             type="text"
             name="ipaddress"
             id="ipaddress"
@@ -74,39 +121,39 @@ function App() {
           <StyledButton type="submit">
             <img src={arrow} alt="Search" />
           </StyledButton>
-        </form>
+        </InputForm>
       </article>
       {address && (
-        <article>
-          <div className="front-content">
-            <div className="cont1">
+        <ResultArticle>
+          <FrontContent>
+            <FrontContentBlock>
               <FrontContText>IP ADDRESS</FrontContText>
               <p className="paragraph-for-front-cont">{address.ip}</p>
-            </div>
+            </FrontContentBlock>
             {address.location && (
-              <div className="cont1">
+              <FrontContentBlock>
                 <FrontContText>LOCATION</FrontContText>
                 <p className="paragraph-for-front-cont">
                   {address.location.city}, {address.location.region}
                 </p>
-              </div>
+              </FrontContentBlock>
             )}
             {address.location && (
-              <div className="cont1">
+              <FrontContentBlock>
                 <FrontContText>TIMEZONE</FrontContText>
                 <p className="paragraph-for-front-cont">
                   UTC {address.location.timezone}
                 </p>
-              </div>
+              </FrontContentBlock>
             )}
-            <div className="cont1">
+            <FrontContentBlock>
               <FrontContText>ISP</FrontContText>
               <p className="paragraph-for-front-cont">{address.isp}</p>
-            </div>
-          </div>
-        </article>
+            </FrontContentBlock>
+          </FrontContent>
+        </ResultArticle>
       )}
-      {address && address.location && (
+          {address && address.location && (
         <MapContainer
           center={[
             address.location.lat,
@@ -121,7 +168,7 @@ function App() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Marker
-            icon={icon}
+            icon={customIcon} // Use the custom icon
             position={[
               address.location.lat,
               address.location.lng
