@@ -17,7 +17,7 @@ export default function Markerposition({ address }) {
   return (
     <div className="marker">
       <Marker icon={icon} position={position}>
-        <Popup>This is the location of the IP Address or Domain</Popup>
+        <Popup>You IP Address or Domain</Popup>
       </Marker>
     </div>
   )
