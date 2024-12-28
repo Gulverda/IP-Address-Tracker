@@ -210,10 +210,27 @@ function App() {
 
   useEffect(() => {
     if (ip) {
+      // Validate IP format
+      const isValidIp = (ip) => {
+        const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        return regex.test(ip);
+      };
+
+      if (!isValidIp(ip)) {
+        setError("Invalid IP address format.");
+        return;
+      }
+
+      const apiKey = process.env.REACT_APP_GEO_API_KEY;
+      if (!apiKey) {
+        setError("API key is missing. Please set the REACT_APP_GEO_API_KEY.");
+        return;
+      }
+
       const fetchLocationData = async () => {
         try {
           const response = await fetch(
-            `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_GEO_API_KEY}&ipAddress=${ip}`
+            `https://geo.ipify.org/api/v2/country,city?apiKey=${apiKey}&ipAddress=${ip}`
           );
 
           if (!response.ok) {
@@ -223,7 +240,7 @@ function App() {
           const data = await response.json();
           setAddress(data);
         } catch (error) {
-          setError(error.message);
+          setError(`Failed to fetch data: ${error.message}`);
         }
       };
 
