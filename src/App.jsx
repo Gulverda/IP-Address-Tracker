@@ -188,7 +188,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_GEO_API_KEY}&ipAddress=${ip}`
+        `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_GEO_API}&ipAddress=${ip}`
       );
 
       if (!response.ok) {
