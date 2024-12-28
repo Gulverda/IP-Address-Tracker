@@ -1,184 +1,269 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import styled from 'styled-components';
+import styled from "styled-components";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
 import arrow from "./images/icon-arrow.svg";
 import background from "./images/bg.png";
-import icon from "./components/icon";
-import L from 'leaflet'; // Import Leaflet for creating a custom icon
+import iconImage from "./components/icon"; // Ensure this path is correct
 import "./App.css";
 
-const StyledButton = styled.button`
-  width: 58px;
-  height: 58px;
-  border-radius: 15px;
-  background: #252525;
-`;
-
-const Center = styled.div`
+// Styled components
+const MainContainer = styled.div`
+  position: relative;
+  height: 100%;
+  font-family: "Rubik", sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  height: 100vh;
-`;
-
-const ImportantText = styled.h1`
-  color: #7e2121;
-  font-family: Rubik;
-  font-size: 31px;
-  font-weight: 600;
-`;
-
-const FrontContText = styled.h2`
-  color: var(--dark-gray, #969696);
-  font-family: Rubik;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1.3px;
 `;
 
 const BackgroundImage = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url(${background});
+  width: 100%;
+  height: 50vh;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)),
+    url(${background});
   background-size: cover;
+  background-position: center;
   z-index: -1;
+`;
+
+const Center = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 20px;
+`;
+
+const Title = styled.h1`
+  color: #fff;
+  font-size: 32px;
+  font-weight: 600;
+  margin-top: 20px;
+  z-index: 2;
 `;
 
 const InputForm = styled.form`
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  z-index: 2;
 `;
 
 const Input = styled.input`
-  width: 250px;
-  padding: 10px;
-  border-radius: 15px 0 0 15px;
+  width: 280px;
+  height: 48px;
+  padding: 0 15px;
+  font-size: 14px;
   border: none;
+  border-radius: 15px 0 0 15px;
+  outline: none;
+`;
+
+const StyledButton = styled.button`
+  width: 58px;
+  height: 48px;
+  background-color: #7e2121;
+  border: none;
+  border-radius: 0 15px 15px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #5c1717;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 const ResultArticle = styled.article`
-  background: rgba(255, 255, 255, 0.7);
+  background: #ffffff;
   border-radius: 15px;
   padding: 20px;
-  margin-top: 20px;
+  margin: 20px auto;
+  max-width: 800px;
+  width: 90%;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
 `;
 
 const FrontContent = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
 `;
 
 const FrontContentBlock = styled.div`
   text-align: center;
+  flex: 1;
 `;
 
+const FrontContText = styled.h2`
+  color: #969696;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+`;
+
+const MapContainerStyled = styled(MapContainer)`
+  margin-top: 20px;
+  height: 600px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+`;
+
+// Custom Leaflet Icon
 const customIcon = new L.Icon({
-  iconUrl: icon, // Use the path to your custom icon image
-  iconSize: [32, 32], // Icon size (width, height)
-  iconAnchor: [16, 32], // Position of the icon's anchor point
-  popupAnchor: [0, -32] // Position of the popup relative to the icon
+  iconUrl: iconImage,
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
 });
 
 function App() {
   const [address, setAddress] = useState(null);
+  const [error, setError] = useState(null);
+  const [ip, setIp] = useState("");
+
+  const getPublicIP = async () => {
+    try {
+      const response = await fetch("https://api.ipify.org?format=json");
+      const data = await response.json();
+      setIp(data.ip);
+    } catch (error) {
+      setError("Error fetching public IP.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!ip) return;
+
+    try {
+      const response = await fetch(
+        `https://geo.ipify.org/api/v2/country,city?apiKey=at_u8Zdl5BouYqkrEacibXgh8FMwkUTv&ipAddress=${ip}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setAddress(data);
+      setError(null);
+    } catch (error) {
+      setError(error.message);
+      setAddress(null);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://geo.ipify.org/api/v1?apiKey=YOUR_API_KEY"
-        );
-        const data = await response.json();
-        setAddress(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
+    getPublicIP();
   }, []);
 
+  useEffect(() => {
+    if (ip) {
+      const fetchLocationData = async () => {
+        try {
+          const response = await fetch(
+            `https://geo.ipify.org/api/v2/country,city?apiKey=at_u8Zdl5BouYqkrEacibXgh8FMwkUTv&ipAddress=${ip}`
+          );
+
+          if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          setAddress(data);
+        } catch (error) {
+          setError(error.message);
+        }
+      };
+
+      fetchLocationData();
+    }
+  }, [ip]);
+
   return (
-    <Center>
+    <MainContainer>
       <BackgroundImage />
-      <article>
-        <ImportantText>IP Address Tracker</ImportantText>
-        <InputForm className="input">
+      <Center>
+        <Title>IP Address Tracker</Title>
+        <InputForm onSubmit={handleSubmit}>
           <Input
             type="text"
             name="ipaddress"
             id="ipaddress"
             placeholder="Search for any IP Address or domain"
+            value={ip}
+            onChange={(e) => setIp(e.target.value)}
             required
           />
           <StyledButton type="submit">
             <img src={arrow} alt="Search" />
           </StyledButton>
         </InputForm>
-      </article>
-      {address && (
-        <ResultArticle>
-          <FrontContent>
-            <FrontContentBlock>
-              <FrontContText>IP ADDRESS</FrontContText>
-              <p className="paragraph-for-front-cont">{address.ip}</p>
-            </FrontContentBlock>
-            {address.location && (
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && (
+          <ResultArticle>
+            <FrontContent>
               <FrontContentBlock>
-                <FrontContText>LOCATION</FrontContText>
-                <p className="paragraph-for-front-cont">
-                  {address.location.city}, {address.location.region}
-                </p>
+                <FrontContText>IP ADDRESS</FrontContText>
+                <p>{address.ip}</p>
               </FrontContentBlock>
-            )}
-            {address.location && (
+              {address.location && (
+                <FrontContentBlock>
+                  <FrontContText>LOCATION</FrontContText>
+                  <p>
+                    {address.location.city}, {address.location.region}
+                  </p>
+                </FrontContentBlock>
+              )}
+              {address.location && (
+                <FrontContentBlock>
+                  <FrontContText>TIMEZONE</FrontContText>
+                  <p>UTC {address.location.timezone}</p>
+                </FrontContentBlock>
+              )}
               <FrontContentBlock>
-                <FrontContText>TIMEZONE</FrontContText>
-                <p className="paragraph-for-front-cont">
-                  UTC {address.location.timezone}
-                </p>
+                <FrontContText>ISP</FrontContText>
+                <p>{address.isp}</p>
               </FrontContentBlock>
-            )}
-            <FrontContentBlock>
-              <FrontContText>ISP</FrontContText>
-              <p className="paragraph-for-front-cont">{address.isp}</p>
-            </FrontContentBlock>
-          </FrontContent>
-        </ResultArticle>
-      )}
-          {address && address.location && (
-        <MapContainer
-          center={[
-            address.location.lat,
-            address.location.lng
-          ]}
-          zoom={13}
-          scrollWheelZoom={false}
-          style={{ height: "500px", width: "100vw" }}
-        >
-          <TileLayer
-            attribution='<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker
-            icon={customIcon} // Use the custom icon
-            position={[
-              address.location.lat,
-              address.location.lng
-            ]}
+            </FrontContent>
+          </ResultArticle>
+        )}
+        {address && address.location && (
+          <MapContainerStyled
+            center={[address.location.lat, address.location.lng]}
+            zoom={13}
+            scrollWheelZoom={false}
           >
-            <Popup>A pretty CSS3 popup</Popup>
-          </Marker>
-        </MapContainer>
-      )}
-    </Center>
+            <TileLayer
+              attribution='<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker
+              icon={customIcon}
+              position={[address.location.lat, address.location.lng]}
+            >
+              <Popup>IP Location</Popup>
+            </Marker>
+          </MapContainerStyled>
+        )}
+      </Center>
+    </MainContainer>
   );
 }
 
