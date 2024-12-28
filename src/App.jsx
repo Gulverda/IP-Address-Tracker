@@ -189,7 +189,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `https://geo.ipify.org/api/v2/country,city?apiKey=at_u8Zdl5BouYqkrEacibXgh8FMwkUTv&ipAddress=${ip}`
+        `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_GEO_API_KEY}&ipAddress=${ip}`
       );
 
       if (!response.ok) {
@@ -214,7 +214,7 @@ function App() {
       const fetchLocationData = async () => {
         try {
           const response = await fetch(
-            `https://geo.ipify.org/api/v2/country,city?apiKey=at_u8Zdl5BouYqkrEacibXgh8FMwkUTv&ipAddress=${ip}`
+            `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_GEO_API_KEY}&ipAddress=${ip}`
           );
 
           if (!response.ok) {
