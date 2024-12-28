@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import styled from "styled-components";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
+import "leaflet/dist/leaflet.css"; 
 import arrow from "./images/icon-arrow.svg";
 import background from "./images/bg.png";
-import iconImage from "./components/icon"; // Ensure this path is correct
+import { customIcon } from "./components/icon"; 
 import "./App.css";
 
 // Styled components
@@ -160,13 +159,13 @@ const MapContainerStyled = styled(MapContainer)`
   }
 `;
 
-// Custom Leaflet Icon
-const customIcon = new L.Icon({
-  iconUrl: iconImage,
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-});
+// const customIcon = new L.Icon({
+//   iconUrl: "https://static.vecteezy.com/system/resources/previews/009/392/023/original/pin-location-icon-sign-symbol-design-free-png.png",
+//   iconSize: [38, 60],
+//   iconAnchor: [22, 94],
+//   popupAnchor: [-3, -76],
+// });
+
 
 function App() {
   const [address, setAddress] = useState(null);

@@ -1,9 +1,10 @@
-import L from "leaflet"
-import icon from "../images/icon-location.svg"
+import L from "leaflet";
 
-export default L.icon({
-  iconSize: [30, 40],
-  iconAnchor: [10, 41],
-  popupAnchor: [2, -40],
-  iconUrl: icon,
-})
+const customIcon = new L.Icon({
+  iconUrl: "https://static.vecteezy.com/system/resources/previews/009/392/023/original/pin-location-icon-sign-symbol-design-free-png.png",
+  iconSize: [38, 60],
+  iconAnchor: [22, 94],
+  popupAnchor: [-3, -76],
+});
+
+export { customIcon };
