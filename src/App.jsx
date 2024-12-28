@@ -221,7 +221,7 @@ function App() {
         return;
       }
 
-      const apiKey = process.env.REACT_APP_GEO_API_KEY;
+      const apiKey = process.env.REACT_APP_GEO_API;
       if (!apiKey) {
         setError("API key is missing. Please set the REACT_APP_GEO_API_KEY.");
         return;
