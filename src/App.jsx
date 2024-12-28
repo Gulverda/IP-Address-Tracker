@@ -35,7 +35,11 @@ const Center = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: 20px;
+  padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 const Title = styled.h1`
@@ -44,6 +48,10 @@ const Title = styled.h1`
   font-weight: 600;
   margin-top: 20px;
   z-index: 2;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const InputForm = styled.form`
@@ -52,6 +60,11 @@ const InputForm = styled.form`
   align-items: center;
   margin-top: 20px;
   z-index: 2;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const Input = styled.input`
@@ -62,6 +75,11 @@ const Input = styled.input`
   border: none;
   border-radius: 15px 0 0 15px;
   outline: none;
+
+  @media (max-width: 768px) {
+    width: 70%;
+    border-radius: 15px;
+  }
 `;
 
 const StyledButton = styled.button`
@@ -83,6 +101,11 @@ const StyledButton = styled.button`
     width: 20px;
     height: 20px;
   }
+
+  @media (max-width: 768px) {
+    border-radius: 15px;
+    margin-top: 10px;
+  }
 `;
 
 const ResultArticle = styled.article`
@@ -93,6 +116,10 @@ const ResultArticle = styled.article`
   max-width: 800px;
   width: 90%;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 const FrontContent = styled.div`
@@ -100,6 +127,11 @@ const FrontContent = styled.div`
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const FrontContentBlock = styled.div`
@@ -122,6 +154,10 @@ const MapContainerStyled = styled(MapContainer)`
   border-radius: 15px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    height: 400px;
+  }
 `;
 
 // Custom Leaflet Icon
