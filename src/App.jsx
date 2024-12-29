@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import styled from "styled-components";
 import "leaflet/dist/leaflet.css"; 
 import arrow from "./images/icon-arrow.svg";
@@ -167,6 +167,17 @@ const MapContainerStyled = styled(MapContainer)`
 // });
 
 
+const CenterMap = ({ lat, lng }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (lat && lng) {
+      map.setView([lat, lng], map.getZoom());
+    }
+  }, [lat, lng, map]);
+
+  return null;
+};
+
 function App() {
   const [address, setAddress] = useState(null);
   const [error, setError] = useState(null);
@@ -210,7 +221,6 @@ function App() {
 
   useEffect(() => {
     if (ip) {
-      // Validate IP format
       const isValidIp = (ip) => {
         const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
         return regex.test(ip);
@@ -312,6 +322,8 @@ function App() {
             >
               <Popup>IP Location</Popup>
             </Marker>
+            {/* This hook will update the map center */}
+            <CenterMap lat={address.location.lat} lng={address.location.lng} />
           </MapContainerStyled>
         )}
       </Center>
